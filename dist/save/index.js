@@ -68165,6 +68165,16 @@ async function run(earlyExit) {
         // A failure to save cache shouldn't prevent the entire CI run from
         // failing, so do not call setFailed() here.
         core.warning(`Saving cache failed: ${error}`);
+
+        // Early exit process so node doesn't wait for hanging promises
+        if (earlyExit) {
+            process.exit(-1);
+        }
+    }
+    // Since we are not using http requests after this
+    // we can safely exit early
+    if (earlyExit) {
+        process.exit(0);
     }
     // Since we are not using http requests after this
     // we can safely exit early
